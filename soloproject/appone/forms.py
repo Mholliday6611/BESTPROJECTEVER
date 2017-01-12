@@ -1,5 +1,5 @@
 from django import forms
-from models import Post, UserProfile
+from models import Post, UserProfile, Page, Comment, Category
 from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
 from django.utils.crypto import get_random_string
@@ -24,7 +24,7 @@ class PostForm(forms.ModelForm):
 
 	class Meta:
 		model = Post
-		fields = ('name',)
+		fields = ('title',)
 		exclude = ('user',)
 
 class CommentForm(forms.ModelForm):

@@ -1,26 +1,27 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from datetime import datetime
-from models import UserProfile, Post
+from models import *
 from forms import UserForm, UserProfileForm, PostForm, CategoryForm, PageForm, ContactForm, PasswordRecoveryForm
 from django.contrib.auth import login, authenticate, logout
+from django.views.generic import FormView
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
 from django.core.urlresolvers import reverse_lazy
+from braces.views import LoginRequiredMixin
 # Create your views here.
 
 def index(request):
 	context_dict = {}
-	recent_post = Post.objects.order_by()
 	popular_post = Post.objects.order_by('-likes' )[:5]
 	
-	context_dict['post'] = recent_post
 	context_dict['post'] = popular_post
 
 
 	response = render(request, 'index.html', context_dict)
 	return response
 
-def Post(request):
+def Posts(request):
 	try:
 		post = Post.objects.get(slug=post_name_slug)
 
