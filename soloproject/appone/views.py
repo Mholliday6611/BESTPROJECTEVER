@@ -4,6 +4,7 @@ from datetime import datetime
 from models import *
 from forms import UserForm, UserProfileForm, PostForm, CategoryForm, PageForm, ContactForm, PasswordRecoveryForm
 from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth import update_session_auth_hash
 from django.views.generic import FormView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
@@ -21,10 +22,16 @@ def index(request):
 	response = render(request, 'index.html', context_dict)
 	return response
 
-def Posts(request):
+def about(request):
+	context_dict = {}
+
+	return render(request, 'about.html', context_dict)
+
+def Posts(request, post_name_slug):
+	context_dict = {}
 	try:
 		post = Post.objects.get(slug=post_name_slug)
-
+		
 		context_dict['post'] = post
 
 	except Post.DoesNotExist:
@@ -45,12 +52,36 @@ def AddPost(request):
 		else:
 			print form.errors
 	else:
-		form = PageForm()
+		form = PostForm()
 
 	context_dict = {'form':form}
 
 	return render(request, 'add-post.html', context_dict)
 
+def category(request, category_name_slug):
+	context_dict = {}
+	context_dict['result_list'] = None
+	context_dict['query'] = None
+
+	if request.method == 'POST':
+		query= request.POST['query'].strip()
+
+		if query:
+			result_list = run_query(query)
+			context_dict['result_list'] = result_list
+			context_dict['query'] = query
+
+	try:
+		category = Category.objects.get(slug=category_name_slug)
+		pages = Page.objects.filter(category=category).order_by('-views')
+
+		context_dict['category'] = category
+		context_dict['pages'] = pages
+
+	except Category.DoesNotExist:
+		pass
+
+	return render(request, 'category.html', context_dict)
 
 @login_required
 def add_page(request, category_name_slug):
@@ -143,6 +174,8 @@ def user_profile(request, user_username):
 	profile = UserProfile.objects.get(user=user)
 	context_dict['profile'] = profile
 	context_dict['pages'] = Page.objects.filter(user=user)
+	context_dict['posts'] = Post.objects.filter(user=profile)
+
 
 	return render(request, 'profile.html', context_dict)
 
@@ -233,3 +266,19 @@ class PasswordRecoveryView(FormView):
 	def form_valid(self, form):
 		form.reset_email()
 		return super(PasswordRecoveryView, self).form_valid(form)
+
+def track_url(request):
+	post_id = None 
+	url = '/'
+	if request.method == 'GET':
+		if 'post_id' in request.GET:
+			post_id = request.GET['post_id']
+			try:
+				post = Post.objects.get(id=post_id)
+				post.views = post.views + 1
+				post.save()
+				url = post.url
+			except:
+				pass
+	return redirect(url)
+

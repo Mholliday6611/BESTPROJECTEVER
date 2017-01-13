@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Login{% endblock %}
+{% block body_block %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/form.css' %}">
+<h2 class="form-sigin-heading">Login to Tutorial App</h2>
+
+	<form class="form-signin" id="login_form" method="post" action="/login/">
+		<h2 class="form-sigin-heading">Please Login</h2>
+		{% csrf_token %}
+		
+		<input class="form-control" placeholder="Username" type="text" name="username" value="" size="50" required autofocus>
+
+		<input class="form-control" placeholder="Password" type="Password" name="password" value="" size="50" required >
+		<br>
+		<button class="btn btn-lg btn-primary btn-block" type="submit" value="Submit" > Sign In</button>
+		</form>
+	</form>
+	<a href="{% url 'recover-password' %}">Forgot your password?</a>
+{% endblock %}

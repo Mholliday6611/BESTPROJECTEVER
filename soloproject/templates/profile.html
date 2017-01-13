@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body_block %}
+<div class="row page-header">
+	<div class="col-xs-12 col-md-6">
+		{% if profile.picture %}
+			<img src="{{profile.picture.url}}" class="img-responsive img-circle" style='width:150px;'>
+		{% else %}
+		<img src="http://www.tshirthell.com/shirts/products/a339/a339.gif?v11301bss2.jpg" class="img-responsive img-circle" style="width:150px;">
+		{% endif %}
+	</div>
+	<div class="col-xs-12 col-md-6">
+		<h1>{{profile.user.username}}</h1>
+		<br>
+		{% if profile.website %}
+		<h2>Check out my <a href="{{profile.website}}">website</a></h2>
+		{% endif %}
+		{% if profile.user == user %}
+		<a href="{% url 'edit_profile' profile.user.username %}">Edit Your Profile</a>
+		<a href="{% url 'settings' %}">Change Password</a>
+		{% endif %}
+	</div>
+</div>
+<div class='row'>
+	<div class="col-xs-12 col-md-6">
+		<h3>Posts Made:</h3>
+		{% if posts %}
+		<ul>
+			{% for post in posts %}
+			<div id='post'>
+				<li>
+					
+					<a href="/post/i-rock">{{ post.title }}</a>
+					
+			{% endfor %}
+		</ul>
+		{% else %}
+		<strong>No Posts currently added.</strong>
+		{% endif %}
+	</div>
+	<div class="col-xs-12 col-md-6">
+		<h3>About {{profile.user.username}}</h3>
+		{% if profile.bio %}
+		<p>{{profile.bio}}</p>
+		{% endif %}
+	</div>
+</div>
+{% endblock %}

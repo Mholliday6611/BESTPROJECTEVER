@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block body_block %}
+<div class="container">
+<div class="page-header">
+<h1>Post by {{ post.user }}</h1>
+</div>
+
+<p>{{ post.content}} </p>
+</div>
+{% endblock %}
